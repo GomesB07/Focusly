@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -14,6 +13,7 @@ import type { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from "../../routes/auth.routes";
 import Logo from '../../../assets/svg/Logo'
 import LottieView from "lottie-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const OnboardingScreen = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -127,7 +127,7 @@ const OnboardingScreen = () => {
   }
 
   const onDone = () => {
-    navigation.navigate("login");
+    navigation.navigate("Login");
   };
 
   return (
