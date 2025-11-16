@@ -1,21 +1,20 @@
 import { createStackNavigator } from "@react-navigation/stack"
-import CreateTask from "../app/painel/createTask/createTask"
+import CreateTask from "../features/tasks/wrappers/createTask"
 import TabRoutes from "./tab.routes"
-import Categories from "../app/painel/categories/categories";
-import CreateCategory from "../app/painel/createCategory/CreateCategory";
-
+import Categories from "../features/categories/wrappers/Categories";
+import CreateCategory from "../features/categories/wrappers/CreateCategory";
 
 export type AppStackParamList = {
     Tab: undefined;
     CreateTask: undefined;
     Categories: undefined;
-    CreateCategory: undefined;
+    CreateCategory: { onCreated?: () => Promise<void> };
 }
 
 
 const AppRoutes = () => {
 
-    const Stack = createStackNavigator()
+    const Stack = createStackNavigator<AppStackParamList>()
 
     return (
         <Stack.Navigator screenOptions={{headerShown: false}}>

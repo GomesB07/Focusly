@@ -1,7 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import Login from "../app/auth/login/Login";
-import Onboarding from "../app/onboarding/Onboarding";
-import SignUp from "../app/auth/signUp/SignUp";
+import Login from "../features/auth/wrappers/Login";
+import Onboarding from "../features/onboarding/wrappers/Onboarding";
+import SignUp from "../features/auth/wrappers/SignUp";
 
 export type AuthStackParamList = {
     Onboarding: undefined;

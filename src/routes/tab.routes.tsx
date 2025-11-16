@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import Home from "../app/painel/home/Home"
-import Tasks from "../app/painel/tasks/tasks"
+import Home from "../features/home/wrappers/Home"
+import Tasks from "../features/tasks/wrappers/tasks"
 import TabBar from "../components/TabBar/TabBar"
 import { FontAwesome } from "@expo/vector-icons"
 

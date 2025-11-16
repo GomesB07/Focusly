@@ -9,29 +9,8 @@ type ButtonProps = {
     onPress: () => void;
 }
 
-type RouteButtons = {
-    CreateTask: JSX.Element;
-    CreateCategory: JSX.Element;
-}
 
-
-const ButtonCreate = ({isSubmitting, textButton, onPress}: ButtonProps) => {
-
-    return (
-        <TouchableOpacity style={stylesCreateTask.buttonForm} onPress={onPress}>
-            {
-                isSubmitting ? (
-                    <ActivityIndicator color={colors.textPrimary} size={20} />
-                ) : (
-                    <Text style={stylesCreateTask.textButtonForm}>{textButton}</Text>
-                )
-            }
-        </TouchableOpacity>
-    )
-}
-
-
-const ButtonDefault = ({isSubmitting, textButton, onPress}: ButtonProps) => {
+const Button = ({isSubmitting, textButton, onPress}: ButtonProps) => {
 
     return (
         <TouchableOpacity style={stylesDefault.buttonForm} onPress={onPress}>
@@ -46,20 +25,6 @@ const ButtonDefault = ({isSubmitting, textButton, onPress}: ButtonProps) => {
     )
 }
 
-
-const Button = ({isSubmitting, onPress, textButton }: ButtonProps) => {
-
-    const {name: routeName} = useRoute()
-
-    
-
-    const routesMap = {
-        CreateTask: <ButtonCreate isSubmitting={isSubmitting} onPress={onPress} textButton={textButton} />,
-        CreateCategory: <ButtonCreate isSubmitting={isSubmitting} onPress={onPress} textButton={textButton} />
-    }
-
-    return routesMap[routeName as keyof RouteButtons] ?? <ButtonDefault isSubmitting={isSubmitting} onPress={onPress} textButton={textButton} />
-}
 
 export default Button
 
