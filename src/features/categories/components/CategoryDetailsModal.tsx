@@ -23,8 +23,8 @@ const CategoryDetailsModal = ({visible, setVisible, category}: CategoryDetailMod
     const translateXEdit = useSharedValue(0)
     const translateYCancelDelete = useSharedValue(0)
     const opacityCancelDelete = useSharedValue(0)
-
-    const defaultTranslateXEdit = translateXEdit.value
+    const translateYAskConfirmDelete = useSharedValue(0)
+    const opacityAskConfirmDelete = useSharedValue(0)
 
     useEffect(() => {
         if(!visible) {
@@ -35,6 +35,8 @@ const CategoryDetailsModal = ({visible, setVisible, category}: CategoryDetailMod
             opacityEdit.value = 1
             translateYCancelDelete.value = withSpring(0)
             opacityCancelDelete.value = 0
+            // translateYAskConfirmDelete.value = withSpring(0)
+            // opacityAskConfirmDelete.value = 0
         }
     }, [visible])
 
@@ -49,7 +51,10 @@ const CategoryDetailsModal = ({visible, setVisible, category}: CategoryDetailMod
             translateXEdit.value = withSpring(translateXEdit.value + 100)
 
             translateYCancelDelete.value = withSpring(translateYCancelDelete.value + 50, {duration: 300})
-            opacityCancelDelete.value = withSpring(1, )
+            opacityCancelDelete.value = withSpring(1)
+
+            translateYAskConfirmDelete.value = withSpring(translateYAskConfirmDelete.value - 50, {duration: 300})
+            opacityAskConfirmDelete.value = withSpring(1)
         }
         
         
@@ -68,12 +73,22 @@ const CategoryDetailsModal = ({visible, setVisible, category}: CategoryDetailMod
 
         translateYCancelDelete.value = withSpring(0)
         opacityCancelDelete.value = withSpring(0, {duration: 100})
+
+        translateYAskConfirmDelete.value = withSpring(0)
+        opacityAskConfirmDelete.value = withSpring(0, {duration: 100})
     }
 
-    const animationStyle = useAnimatedStyle(() => ({
+    const askConfirmDeleteAnimatedStyle = useAnimatedStyle(() => ({
+        transform: [{translateY: translateYAskConfirmDelete.value}],
+        opacity: opacityAskConfirmDelete.value
+    }))
+
+    const buttonCancelConfirmDeleteAnimatedStyle = useAnimatedStyle(() => ({
         transform: [{translateY: translateYCancelDelete.value}],
         opacity: opacityCancelDelete.value
     }))
+
+    
 
     const contentModal = (
         <View style={styles.container}>
@@ -103,32 +118,45 @@ const CategoryDetailsModal = ({visible, setVisible, category}: CategoryDetailMod
             </View>
         
 
-            <View style={styles.viewButtons}>
-                <ButtonOutline 
-                    iconName={!isDeleting && 'trash'} 
-                    width={widthDelete}
-                    color={isDeleting ? 'green' : 'red'} 
-                    onPress={() => onDelete()} 
-                    buttonDelete
-                    widthDimension={widthDimension}
-                />
 
-                <ButtonOutline 
-                    iconName={'edit'} 
-                    width={widthEdit}
-                    onPress={() => onCancelDelete()} 
-                    color={'blue'}
-                    opacity={opacityEdit}
-                    translateXEdit={translateXEdit}
-                    widthDimension={widthDimension}
-                />
+            <View style={styles.containerAskAndButtons}>
+
+                <Animated.View style={[styles.containerAskConfirmDelete, askConfirmDeleteAnimatedStyle]}>
+                    <TouchableOpacity onPress={() => onCancelDelete()}>
+                        <Text style={{fontSize: 16}}>Deseja deletar essa categoria?</Text>
+                    </TouchableOpacity>
+                </Animated.View>
+
+                <View style={styles.viewButtons}>
+                    <ButtonOutline 
+                        iconName={!isDeleting && 'trash'} 
+                        width={widthDelete}
+                        color={isDeleting ? 'green' : 'red'} 
+                        onPress={() => onDelete()} 
+                        buttonDelete
+                        widthDimension={widthDimension}
+                    />
+
+                    <ButtonOutline 
+                        iconName={'edit'} 
+                        width={widthEdit}
+                        onPress={() => onCancelDelete()} 
+                        color={'blue'}
+                        opacity={opacityEdit}
+                        translateXEdit={translateXEdit}
+                        widthDimension={widthDimension}
+                    />
+                </View>
+
+                <Animated.View style={[styles.containerCancelDelete, buttonCancelConfirmDeleteAnimatedStyle]}>
+                    <TouchableOpacity onPress={() => onCancelDelete()}>
+                        <Text style={{fontSize: 16, color: 'red'}}>Cancelar</Text>
+                    </TouchableOpacity>
+                </Animated.View>
+
             </View>
 
-            <Animated.View style={[styles.containerCancelDelete, animationStyle]}>
-                <TouchableOpacity onPress={() => onCancelDelete()}>
-                    <Text style={{fontSize: 16, color: 'red'}}>Cancelar</Text>
-                </TouchableOpacity>
-            </Animated.View>
+            
 
         </View>
     )
@@ -207,19 +235,33 @@ const styles = StyleSheet.create({
         backgroundColor: 'red',
         borderRadius: 20,
     },
+    containerAskAndButtons: {
+        width: '100%',
+        height: 70,
+        marginTop: 80,
+    },
+    containerAskConfirmDelete: {
+        width: '100%',
+        position: 'absolute',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 50,
+    },
     viewButtons: {
         width: '100%',
+        height: 50,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-around',
         flexDirection: 'row',
-        marginTop: 100,
-        backgroundColor: 'red'
     },
     containerCancelDelete: {
         width: '100%',
+        height: 50,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-    }
+        position: 'absolute',
+    },
 })
