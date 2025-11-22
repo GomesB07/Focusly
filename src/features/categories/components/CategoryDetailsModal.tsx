@@ -6,7 +6,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import ButtonOutline from "./ButtonOutline";
 import { useEffect, useState } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
-import { is } from "zod/v4/locales";
+import SwipeToConfirmButton from "./SwipeToConfirmButton";
 
 type CategoryDetailModalProps = {
     visible: boolean;
@@ -35,8 +35,8 @@ const CategoryDetailsModal = ({visible, setVisible, category}: CategoryDetailMod
             opacityEdit.value = 1
             translateYCancelDelete.value = withSpring(0)
             opacityCancelDelete.value = 0
-            // translateYAskConfirmDelete.value = withSpring(0)
-            // opacityAskConfirmDelete.value = 0
+            translateYAskConfirmDelete.value = withSpring(0)
+            opacityAskConfirmDelete.value = 0
         }
     }, [visible])
 
@@ -44,7 +44,7 @@ const CategoryDetailsModal = ({visible, setVisible, category}: CategoryDetailMod
     const onDelete = () => {
 
         if(!isDeleting) {
-            widthDelete.value = withSpring(widthDimension * 0.95)
+            widthDelete.value = withSpring(widthDimension * 0.60)
 
             widthEdit.value = withSpring(0)
             opacityEdit.value = withSpring(0)
@@ -57,9 +57,9 @@ const CategoryDetailsModal = ({visible, setVisible, category}: CategoryDetailMod
             opacityAskConfirmDelete.value = withSpring(1)
         }
         
-        
-
         setIsDeleting(true)
+
+
     }
 
     const onCancelDelete = () => {
@@ -128,25 +128,35 @@ const CategoryDetailsModal = ({visible, setVisible, category}: CategoryDetailMod
                 </Animated.View>
 
                 <View style={styles.viewButtons}>
-                    <ButtonOutline 
-                        iconName={!isDeleting && 'trash'} 
-                        width={widthDelete}
-                        color={isDeleting ? 'green' : 'red'} 
-                        onPress={() => onDelete()} 
-                        buttonDelete
-                        widthDimension={widthDimension}
-                    />
+                    {
+                        !isDeleting ? (
+                            <>
+                                <ButtonOutline 
+                                    iconName={!isDeleting && 'trash'} 
+                                    width={widthDelete}
+                                    color={isDeleting ? 'green' : 'red'} 
+                                    onPress={() => onDelete()} 
+                                    buttonDelete
+                                    widthDimension={widthDimension}
+                                />
 
-                    <ButtonOutline 
-                        iconName={'edit'} 
-                        width={widthEdit}
-                        onPress={() => onCancelDelete()} 
-                        color={'blue'}
-                        opacity={opacityEdit}
-                        translateXEdit={translateXEdit}
-                        widthDimension={widthDimension}
-                    />
+                                <ButtonOutline 
+                                    iconName={'edit'} 
+                                    width={widthEdit}
+                                    onPress={() => onCancelDelete()} 
+                                    color={'blue'}
+                                    opacity={opacityEdit}
+                                    translateXEdit={translateXEdit}
+                                    widthDimension={widthDimension}
+                                />
+                            </>
+                        ) : (
+                            <SwipeToConfirmButton />
+                        )
+                    }
                 </View>
+
+                
 
                 <Animated.View style={[styles.containerCancelDelete, buttonCancelConfirmDeleteAnimatedStyle]}>
                     <TouchableOpacity onPress={() => onCancelDelete()}>
@@ -251,10 +261,6 @@ const styles = StyleSheet.create({
     viewButtons: {
         width: '100%',
         height: 50,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-        flexDirection: 'row',
     },
     containerCancelDelete: {
         width: '100%',
