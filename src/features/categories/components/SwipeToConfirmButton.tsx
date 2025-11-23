@@ -4,8 +4,15 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { clamp, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 
+type getLayoutType = {
+    data: LayoutChangeEvent,
+    element?: string
+}
+
+
 const SwipeToConfirmButton = () => {
     const [knobWidth, setKnobWidth] = useState(0);
+    const [fillWidth, setFillWidth] = useState(0);
     const widthDimension = Math.round(Dimensions.get('window').width)
     const start = useSharedValue(0)
     const offsetKnob = useSharedValue(0)
@@ -17,6 +24,8 @@ const SwipeToConfirmButton = () => {
     const border = 2
     const inner = widthDimension && widthDimension * 0.95 - (border * 2)
     const maxTranslateX = inner - knobWidth
+    const scaleXFill = offsetKnob.value / maxTranslateX
+    const translateXFill = (inner * (scaleXFill - 1)) / 2
 
     useEffect(() => {
         scaleKnob.value = withSpring(1, {stiffness: 1000})
@@ -26,8 +35,12 @@ const SwipeToConfirmButton = () => {
         }, 200)
     }, [])
 
-    const getWidth = (data: LayoutChangeEvent) => {
-        setKnobWidth(Math.round(data.nativeEvent.layout.width))
+    const getLayout = ({data, element}: getLayoutType) => {
+        if(element === 'fill') {
+            setFillWidth(Math.round(data.nativeEvent.layout.width))
+        } else {
+            setKnobWidth(Math.round(data.nativeEvent.layout.width))
+        }
     }
 
     const panGesture = Gesture.Pan()
@@ -52,16 +65,20 @@ const SwipeToConfirmButton = () => {
     }))
 
     const animatedStyleBackground = useAnimatedStyle(() => ({
-        width: offsetKnob.value + 20,
+        // width: offsetKnob.value + 20,
+        transform: [
+            {scaleX: offsetKnob.value / maxTranslateX},
+            {translateX: (inner * (offsetKnob.value / maxTranslateX - 1) - 2)}
+        ],
         opacity: opacityBackground.value
     }))
 
     return (
         <Animated.View style={[styles.container, animatedStyleContainer]}>
             <GestureDetector gesture={panGesture}>
-                <Animated.View style={[styles.knob, animatedStyleKnob]} onLayout={(data) => getWidth(data)}></Animated.View>
+                <Animated.View style={[styles.knob, animatedStyleKnob]} onLayout={(data) => getLayout({data})}></Animated.View>
             </GestureDetector>
-            <Animated.View style={[styles.backgroundKnob, animatedStyleBackground]} />
+            <Animated.View style={[styles.backgroundKnob, {width: inner}, animatedStyleBackground]} onLayout={(data) => getLayout({data, element: 'fill'})} />
         </Animated.View>
     )
 
@@ -78,7 +95,6 @@ const styles = StyleSheet.create({
         height: 50,
         margin: 'auto',
         display: 'flex',
-        justifyContent: 'center',
         position: 'absolute',
         left: 10,
     },
@@ -93,6 +109,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         height: '100%',
         backgroundColor: 'green',
-        zIndex: -1
+        zIndex: -1,
+        left: 0
     }
 })
