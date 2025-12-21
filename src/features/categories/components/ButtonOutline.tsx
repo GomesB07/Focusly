@@ -1,21 +1,23 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { use, useState } from "react";
-import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from "react-native"
-import Animated, { SharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import { LayoutChangeEvent, Pressable, StyleSheet } from "react-native"
+import Animated, { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 type ButtonOutlineProps = {
     onPress: () => void;
     width: SharedValue<number>;
     color: string;
-    iconName: React.ComponentProps<typeof FontAwesome>['name'] | false
+    iconName: React.ComponentProps<typeof FontAwesome>['name']
     opacity?: SharedValue<number>;
     translateXEdit?: SharedValue<number>;
     buttonDelete?: boolean;
     widthDimension: number;
+    translateIcon?: SharedValue<number>;
+    buttonInner?:  React.Dispatch<React.SetStateAction<number>>;
 }
 
 
-const ButtonOutline = ({onPress, color, iconName, width, opacity, translateXEdit, buttonDelete, widthDimension}: ButtonOutlineProps) => {
+const ButtonOutline = ({onPress, color, iconName, width, opacity, translateXEdit, buttonDelete, widthDimension, translateIcon, buttonInner}: ButtonOutlineProps) => {
 
     const [widthButton, setWidthButton] = useState(0);
 
@@ -27,8 +29,13 @@ const ButtonOutline = ({onPress, color, iconName, width, opacity, translateXEdit
         width: width?.value
     }))
 
+    const animatedIcon = useAnimatedStyle(() => ({
+        transform: [{translateX: translateIcon?.value ?? 0}]
+    }))
+
     const getWidthButton = (data: LayoutChangeEvent) => {
         setWidthButton(Math.round(data.nativeEvent.layout.width))
+        buttonInner && buttonInner(Math.round(data.nativeEvent.layout.width))
     }
 
     return (
@@ -40,9 +47,9 @@ const ButtonOutline = ({onPress, color, iconName, width, opacity, translateXEdit
                 onPress={onPress} 
                 style={[styles.button, {borderColor: color}]}
             >
-                {
-                    iconName && (<FontAwesome name={iconName} size={24} color={color} />)
-                }
+                <Animated.View style={animatedIcon}>
+                    <FontAwesome name={iconName} size={25} color={color} />
+                </Animated.View>
             </Pressable>
         </Animated.View>
     )
